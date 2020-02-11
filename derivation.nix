@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bin
     cp -r portfolio/ $out
-    ln -s $out/PortfolioPerformance  $out/bin/PortfolioPerformance
+    ln -s $out/portfolio/PortfolioPerformance  $out/bin/PortfolioPerformance
     '';
 
   meta = with stdenv.lib; {
