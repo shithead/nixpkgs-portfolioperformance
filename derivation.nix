@@ -20,8 +20,8 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-  	libsecret
-	glib
+    libsecret
+    glib
   ];
   unpackPhase = ''
     tar xvf $src
