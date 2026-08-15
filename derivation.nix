@@ -7,11 +7,11 @@
 
 stdenv.mkDerivation rec {
   name = "PortfolioPerformance-${version}";
-  version = "0.83.2";
+  version = "0.86.1";
 
   src = fetchurl {
     url = "https://github.com/buchen/portfolio/releases/download/${version}/${name}-linux.gtk.x86_64.tar.gz";
-    sha256 = "589aa46acf734a7495bc99ae3aa751b8d60ebbd44b4e4bc904b21336b2b3ecf9";
+    sha256 = "8931ed22e4956a935ce597242087c35d8a4c3f63e260b57c2688eea90f6797d1";
   };
 
   nativeBuildInputs = [
