@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , fetchurl
 , autoPatchelfHook
 , libsecret
@@ -32,7 +33,7 @@ stdenv.mkDerivation rec {
     ln -s $out/portfolio/PortfolioPerformance  $out/bin/PortfolioPerformance
     '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = https://www.portfolio-performance.info;
     description = "Portfolio Performance";
     license = licenses.epl10;
