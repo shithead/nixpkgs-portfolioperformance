@@ -27,6 +27,10 @@ stdenv.mkDerivation rec {
     tar xvf $src
   '';
 
+  fixupPhase = ''
+    rm -rf $out/portfolio/plugins/com.sun.jna_*/com/sun/jna/dragonflybsd-x86-64
+    '';
+
   installPhase = ''
     mkdir -p $out/bin
     cp -r portfolio/ $out
