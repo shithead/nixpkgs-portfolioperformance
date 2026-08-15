@@ -4,6 +4,7 @@
 , autoPatchelfHook
 , libsecret
 , glib
+, gsettings-desktop-schemas
 }:
 
 stdenv.mkDerivation rec {
@@ -22,6 +23,7 @@ stdenv.mkDerivation rec {
   buildInputs = [
     libsecret
     glib
+    gsettings-desktop-schemas
   ];
   unpackPhase = ''
     tar xvf $src
