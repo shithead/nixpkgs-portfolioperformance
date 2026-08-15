@@ -36,7 +36,7 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     homepage = https://www.portfolio-performance.info;
     description = "Portfolio Performance";
-    license = licenses.epl10;
+    license = licenses.epl20;
     platforms = platforms.linux;
     maintainers = with maintainers; [ makefu ];
   };
