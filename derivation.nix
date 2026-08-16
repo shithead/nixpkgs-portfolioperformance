@@ -2,8 +2,10 @@
 , lib
 , fetchurl
 , autoPatchelfHook
+, wrapGAppsHook3
 , libsecret
 , glib
+, gtk3
 , gsettings-desktop-schemas
 }:
 
@@ -18,25 +20,31 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     autoPatchelfHook
+    wrapGAppsHook3
   ];
 
   buildInputs = [
     libsecret
     glib
+    gtk3
     gsettings-desktop-schemas
   ];
+
   unpackPhase = ''
     tar xvf $src
   '';
 
-  fixupPhase = ''
-    rm -rf $out/portfolio/plugins/com.sun.jna_*/com/sun/jna/dragonflybsd-x86-64
-    '';
+  dontWrapGApps = true;
 
   installPhase = ''
     mkdir -p $out/bin
     cp -r portfolio/ $out
-    ln -s $out/portfolio/PortfolioPerformance  $out/bin/PortfolioPerformance
+    rm -rf $out/portfolio/plugins/com.sun.jna_*/com/sun/jna/dragonflybsd-x86-64
+    '';
+
+  postFixup = ''
+    makeWrapper $out/portfolio/PortfolioPerformance $out/bin/PortfolioPerformance \
+      "''${gappsWrapperArgs[@]}"
     '';
 
   meta = with lib; {
