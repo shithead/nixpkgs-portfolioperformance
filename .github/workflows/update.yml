@@ -1,0 +1,64 @@
+name: Update Portfolio Performance
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-portfolioperformance
+  cancel-in-progress: true
+
+env:
+  NIXPKGS_REV: 8be7bd0c83f12e2e3bbba07c9044d6fed9e66f7f
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/${{ env.NIXPKGS_REV }}.tar.gz
+
+      - name: Fetch latest release and update derivation
+        run: ./scripts/update.sh
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --exit-code --quiet derivation.nix; then
+            echo "no changes"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=$(sed -n 's/^[[:space:]]*version = "\([^"]*\)".*/\1/p' derivation.nix)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build derivation
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          nix-build -E 'with import <nixpkgs> {}; callPackage ./derivation.nix {}'
+
+      - name: Commit, tag and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add derivation.nix
+          git commit -m "Update ${{ steps.changes.outputs.version }}"
+          git tag "v${{ steps.changes.outputs.version }}"
+          git push origin master
+          git push origin "v${{ steps.changes.outputs.version }}"
+
+      - name: Create GitHub release
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          gh release create "v${{ steps.changes.outputs.version }}" \
+            --title "Portfolio Performance ${{ steps.changes.outputs.version }}" \
+            --notes "Automatisches Update der nixpkgs-Derivation auf ${{ steps.changes.outputs.version }}."
